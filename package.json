@@ -1,0 +1,27 @@
+{
+    "name": "decouverto-map-walks",
+    "version": "0.0.0",
+    "description": "A website to display all the walks start point of the Découverto website.",
+    "devDependencies": {
+        "browser-sync": "^2.24.6",
+        "browserify": "^13.3.0",
+        "gulp": "^3.9.1",
+        "gulp-htmlmin": "^5.0.1",
+        "gulp-autoprefixer": "^5.0.0",
+        "gulp-cli": "^2.0.1",
+        "gulp-csso": "^3.0.1",
+        "gulp-rename": "^1.4.0",
+        "gulp-uglify": "^3.0.1",
+        "gulplog": "^1.0.0",
+        "through": "^2.3.8",
+        "rimraf": "^2.6.2",
+        "vinyl-buffer": "^1.0.1",
+        "vinyl-source-stream": "^2.0.0"
+    },
+    "author": {
+        "name": "Cédric JUNG",
+        "email": "cedced19@gmail.com",
+        "url": "https://github.com/cedced19"
+    },
+    "license": "MIT"
+}
