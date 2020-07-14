@@ -10,11 +10,13 @@ var htmlmin = require('gulp-htmlmin');
 var csso = require('gulp-csso');
 var autoprefixer = require('gulp-autoprefixer');
 var through = require('through');
+var concatCss = require('gulp-concat-css');
 
 var isDist = process.argv.indexOf('serve') === -1;
 
 gulp.task('css', function () {
-    return gulp.src('dev/styles/index.css')
+    return gulp.src('dev/**/**.css')
+    .pipe(concatCss('styles/bundle.css'))
     .pipe(isDist ? csso() : through())
     .pipe(isDist ? autoprefixer('last 2 versions', { map: false }) : through())
     .pipe(rename('index.min.css'))
@@ -79,7 +81,7 @@ gulp.task('serve', function () {
 
     gulp.watch('dev/*.html', ['html-watch']);
 
-    gulp.watch('dev/styles/index.css', ['css-watch']);
+    gulp.watch('dev/styles/*.css', ['css-watch']);
     gulp.watch('dev/scripts/index.js', ['js-index-watch']);
 });
 

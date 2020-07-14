@@ -4,7 +4,8 @@ var getJSON = require('./get-json.js');
 
 var element = document.getElementById('popup');
 
-
+window.$ = window.jQuery = require('jquery');
+require('./bootstrap')
 
 
 getJSON('/walks.json', function (err, data) {
@@ -12,11 +13,12 @@ getJSON('/walks.json', function (err, data) {
 
     var markerSource = new ol.source.Vector();
 
-    function addMarker(lon, lat, title) {
+    function addMarker(lon, lat, title, id) {
 
         var iconFeature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
-            title: title
+            title: title,
+            id: id
         });
 
         iconFeature.setStyle(new ol.style.Style({
@@ -63,11 +65,10 @@ getJSON('/walks.json', function (err, data) {
         if (feature) {
             var coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
-            $(element).popover({
-                placement: 'top',
-                html: true,
-                content: feature.get('title')
-            });
+            $(element).attr('data-original-title', 'Balade');
+            $(element).attr('data-placement', 'top');
+            $(element).attr('data-html', true);
+            $(element).attr('data-content', '<a target="_blank" href="https://decouverto.fr/rando/'+ feature.get('id') + '">' + feature.get('title') +  '</a>');
             $(element).popover('show');
         } else {
             $(element).popover('destroy');
@@ -100,7 +101,7 @@ getJSON('/walks.json', function (err, data) {
 
     // set markers
     data.forEach(function (el) {
-        addMarker(el.coord.longitude, el.coord.latitude, el.title);
+        addMarker(el.coord.longitude, el.coord.latitude, el.title, el.id);
         barycentre.longitude += el.coord.longitude
         barycentre.latitude += el.coord.latitude
         barycentre.n += 1
