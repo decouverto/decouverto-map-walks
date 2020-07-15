@@ -8,7 +8,7 @@ window.$ = window.jQuery = require('jquery');
 require('./bootstrap')
 
 
-getJSON('/walks.json', function (err, data) {
+getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
     if (err) return console.error(err);
 
     var markerSource = new ol.source.Vector();
