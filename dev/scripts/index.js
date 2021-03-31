@@ -1,4 +1,3 @@
-
 var getJSON = require('./get-json.js');
 
 
@@ -8,10 +7,11 @@ window.$ = window.jQuery = require('jquery');
 require('./bootstrap')
 
 
-getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
+getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
     if (err) return console.error(err);
 
     var markerSource = new ol.source.Vector();
+    var radiusSource = new ol.source.Vector();
 
     function addMarker(lon, lat, title, id) {
 
@@ -41,6 +41,9 @@ getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
                 source: new ol.source.OSM()
             }),
             new ol.layer.Vector({
+                source: radiusSource
+            }),
+            new ol.layer.Vector({
                 source: markerSource
             })
         ],
@@ -57,18 +60,23 @@ getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
         offset: [0, -50]
     });
     map.addOverlay(popup);
-    map.on('click', function (e) {
+    map.getViewport().addEventListener("dblclick", function(e) {
+        var coordinate = map.getEventCoordinate(e);
+        radiusSource.clear();
+        radiusSource.addFeature(new ol.Feature(new ol.geom.Circle(coordinate, 16000)));
+    });
+    map.on('click', function(e) {
         var feature = map.forEachFeatureAtPixel(e.pixel,
-            function (feature) {
+            function(feature) {
                 return feature;
             });
-        if (feature) {
+        if (feature && feature.get('title') != undefined) {
             var coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
             $(element).attr('data-original-title', 'Balade');
             $(element).attr('data-placement', 'top');
             $(element).attr('data-html', true);
-            $(element).attr('data-content', '<a target="_blank" href="https://decouverto.fr/rando/'+ feature.get('id') + '">' + feature.get('title') +  '</a>');
+            $(element).attr('data-content', '<a target="_blank" href="https://decouverto.fr/rando/' + feature.get('id') + '">' + feature.get('title') + '</a>');
             $(element).popover('show');
         } else {
             $(element).popover('destroy');
@@ -76,18 +84,18 @@ getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
     });
     map.on('pointermove', function(e) {
         if (e.dragging) {
-          $(element).popover('destroy');
-          return;
+            $(element).popover('destroy');
+            return;
         }
         var hit = this.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
             return true;
-        }); 
+        });
         if (hit) {
             this.getTargetElement().style.cursor = 'pointer';
         } else {
             this.getTargetElement().style.cursor = '';
         }
-      });
+    });
 
     // set center
     map.getView().setZoom(8);
@@ -100,7 +108,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function (err, data) {
     }
 
     // set markers
-    data.forEach(function (el) {
+    data.forEach(function(el) {
         addMarker(el.coord.longitude, el.coord.latitude, el.title, el.id);
         barycentre.longitude += el.coord.longitude
         barycentre.latitude += el.coord.latitude

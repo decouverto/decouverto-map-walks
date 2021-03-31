@@ -19,10 +19,18 @@
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0"
     },
+    "scripts": {
+        "build": "gulp",
+        "start": "gulp serve",
+        "preinstall": "npx npm-force-resolutions"
+    },
     "author": {
         "name": "Cédric JUNG",
         "email": "cedced19@gmail.com",
         "url": "https://github.com/cedced19"
+    },
+    "resolutions": {
+        "graceful-fs": "^4.2.4"
     },
     "license": "MIT",
     "dependencies": {
