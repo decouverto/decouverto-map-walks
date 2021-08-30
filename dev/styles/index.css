@@ -191,6 +191,11 @@ a {
     }
 }
 
+.expl {
+    margin: 5px;
+    margin-bottom: 1em;
+}
+
 @media (max-width: 600px) {
     h2 {
         font-size: 3rem;
@@ -243,5 +248,12 @@ a {
 @media (max-width: 450px) {
     header h1 {
         font-size: 1.2em;
+    }
+    .map {
+        min-height: 100%;
+    }
+    .content {
+        min-height: 100%;
+        margin-right: 10px;
     }
 }
