@@ -106,6 +106,10 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
                     geometry: lineString,
                     name: 'Line'
                 }));
+                map.getView().fit(lineSource.getExtent(), {
+                    size: map.getSize(),
+                    maxZoom: 14
+                });
             });
         } else {
             $(element).popover('destroy');
