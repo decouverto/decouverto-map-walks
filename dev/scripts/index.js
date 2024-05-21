@@ -12,13 +12,22 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
 
     var markerSource = new ol.source.Vector();
     var radiusSource = new ol.source.Vector();
+    var lineSource = new ol.source.Vector();
+    var lineStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#000',
+            width: 5
+        })
+    });
 
     function addMarker(lon, lat, title, id) {
 
         var iconFeature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
             title: title,
-            id: id
+            id: id,
+            lon: lon,
+            lat: lat
         });
 
         iconFeature.setStyle(new ol.style.Style({
@@ -39,6 +48,10 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.OSM()
+            }),
+            new ol.layer.Vector({
+                source: lineSource,
+                style: lineStyle,
             }),
             new ol.layer.Vector({
                 source: radiusSource
@@ -70,6 +83,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
             function(feature) {
                 return feature;
             });
+        lineSource.clear();
         if (feature && feature.get('title') != undefined) {
             var coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
@@ -78,6 +92,21 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
             $(element).attr('data-html', true);
             $(element).attr('data-content', '<a target="_blank" href="https://decouverto.fr/rando/' + feature.get('id') + '">' + feature.get('title') + '</a>');
             $(element).popover('show');
+            map.getView().setCenter(ol.proj.transform([feature.get('lon'), feature.get('lat')], 'EPSG:4326', 'EPSG:3857'));
+            getJSON('https://decouverto.fr/walks/'+ feature.get('id') +'/index.json', function(err, data) {
+                if (err) return console.error(err);
+                var points = [];
+                data.itinerary.forEach(function (el) {
+                    points.push([el.longitude, el.latitude]);
+                });
+                points.push([data.itinerary[0].longitude, data.itinerary[0].latitude]);
+                var lineString = new ol.geom.LineString(points);
+                lineString.transform('EPSG:4326', 'EPSG:3857');
+                lineSource.addFeature(new ol.Feature({
+                    geometry: lineString,
+                    name: 'Line'
+                }));
+            });
         } else {
             $(element).popover('destroy');
         }
