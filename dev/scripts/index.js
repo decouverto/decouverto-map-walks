@@ -87,7 +87,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
             
             element.querySelector('.popover-content').innerHTML = '<a target="_blank" href="https://decouverto.fr/rando/' + feature.get('id') + '">' + feature.get('title') + '</a>';
 
-            popover = element.querySelector('.popover')
+            popover = element.querySelector('.popover');
             popover.style.display = 'block';
             popover.style.position = 'relative';
 
@@ -107,7 +107,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
                 }));
                 map.getView().fit(lineSource.getExtent(), {
                     size: map.getSize(),
-                    maxZoom: 14
+                    maxZoom: map.getView().getZoom()
                 });
             });
         }
@@ -115,7 +115,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
     map.on('pointermove', function(e) {
         if (e.dragging) {
             popover = element.querySelector('.popover')
-            //popover.style.display = 'none';
+            popover.style.display = 'none';
             return;
         }
         var hit = this.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
