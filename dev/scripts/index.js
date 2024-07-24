@@ -3,10 +3,6 @@ var getJSON = require('./get-json.js');
 
 var element = document.getElementById('popup');
 
-window.$ = window.jQuery = require('jquery');
-require('./bootstrap')
-
-
 getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
     if (err) return console.error(err);
 
@@ -87,11 +83,14 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
         if (feature && feature.get('title') != undefined) {
             var coordinates = feature.getGeometry().getCoordinates();
             popup.setPosition(coordinates);
-            element.setAttribute('data-original-title', 'Balade');
-            element.setAttribute('data-placement', 'top');
-            element.setAttribute('data-html', 'true');
-            element.setAttribute('data-content', '<a target="_blank" href="https://decouverto.fr/rando/' + feature.get('id') + '">' + feature.get('title') + '</a>');
-            $(element).popover('show');
+            element.innerHTML = '<div class="popover fade top in" style="display: block;" role="tooltip"><div class="arrow"></div><h3 class="popover-title">Balade</h3><div class="popover-content"></div></div>'
+            
+            element.querySelector('.popover-content').innerHTML = '<a target="_blank" href="https://decouverto.fr/rando/' + feature.get('id') + '">' + feature.get('title') + '</a>';
+
+            popover = element.querySelector('.popover')
+            popover.style.display = 'block';
+            popover.style.position = 'relative';
+
             map.getView().setCenter(ol.proj.transform([feature.get('lon'), feature.get('lat')], 'EPSG:4326', 'EPSG:3857'));
             getJSON('https://decouverto.fr/walks/'+ feature.get('id') +'/index.json', function(err, data) {
                 if (err) return console.error(err);
@@ -111,13 +110,12 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
                     maxZoom: 14
                 });
             });
-        } else {
-            $(element).popover('destroy');
         }
     });
     map.on('pointermove', function(e) {
         if (e.dragging) {
-            $(element).popover('destroy');
+            popover = element.querySelector('.popover')
+            //popover.style.display = 'none';
             return;
         }
         var hit = this.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
