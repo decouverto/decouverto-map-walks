@@ -16,11 +16,11 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
         })
     });
 
-    function addMarker(lon, lat, title, id) {
+    function addMarker(lon, lat, title, id, km) {
 
         var iconFeature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857')),
-            title: title,
+            title: title + ' (' + km + ' km)',
             id: id,
             lon: lon,
             lat: lat
@@ -140,9 +140,9 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
 
     // set markers
     data.forEach(function(el) {
-        addMarker(el.coord.longitude, el.coord.latitude, el.title, el.id);
-        barycentre.longitude += el.coord.longitude
-        barycentre.latitude += el.coord.latitude
+        addMarker(el.lng, el.lat, el.title, el.id, el.dist);
+        barycentre.longitude += el.lng
+        barycentre.latitude += el.lat
         barycentre.n += 1
     });
     barycentre.longitude /= barycentre.n
