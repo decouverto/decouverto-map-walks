@@ -140,7 +140,7 @@ getJSON('https://decouverto.fr/walks/first-points.json', function(err, data) {
 
     // set markers
     data.forEach(function(el) {
-        addMarker(el.coord.longitude, el.coord.latitude, el.title, el.id);
+        addMarker(el.coord.longitude, el.coord.latitude, el.title, el.id, el.dist);
         barycentre.longitude += el.coord.longitude
         barycentre.latitude += el.coord.latitude
         barycentre.n += 1
